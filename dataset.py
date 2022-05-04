@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 import shutil
 import pickle
-from constants import MAX_LEN,DATA_PATH, TFRECORD_DIR
+from constants import MAX_LEN, DATA_PATH, TFRECORD_DIR, MODEL_DIR
 
 
 def _bytes_features(value):
@@ -20,7 +20,7 @@ class TrainDataset:
         self.train_record_path = os.path.join(TFRECORD_DIR, 'train.tfrecord')
         self.val_record_path = os.path.join(TFRECORD_DIR, 'val.tfrecord')
         self.test_record_path = os.path.join(TFRECORD_DIR, 'test.tfrecord')
-        self.tokenizer_path = os.path.join(TFRECORD_DIR, 'tokenizer.bin')
+        self.tokenizer_path = os.path.join(MODEL_DIR, 'tokenizer.bin')
         if args.create_tfrecord:
             print('reading data')
             if args.dataset == 'Custom':
@@ -78,19 +78,9 @@ class TrainDataset:
                 }
             )
             sequence = tf.io.decode_raw(feature['sequence'], tf.int32)
-            # sequence = tf.reshape(sequence, (-1, 512))
-            #
-            # padded_seqs_split = np.zeros(shape=(8, 8, 8), dtype=np.float32)
-            # # (8, ndarray(64))
-            # split1 = np.split(sequence, 8)
-            # for j in range(8):
-            #     # (8, ndarray(8))
-            #     s = np.split(split1[j], 8)
-            #     padded_seqs_split[j] = np.split(split1[j], 8)
-
             return tf.reshape(sequence, (8, 8, 8)), feature['label']
 
-        dataset = tf.data.TFRecordDataset([self.record_path[split]]).map(decode_fn).batch(self.batch_size)
+        dataset = tf.data.TFRecordDataset([self.record_path[split]]).map(decode_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(self.batch_size)
         return dataset
 
     def get_vocabulary(self):
@@ -116,6 +106,10 @@ class TrainDataset:
     def split_csv(self, csv_path, sizes):
         assert (isinstance(sizes, list) or isinstance(sizes, tuple)) and np.isclose(np.sum(sizes), 1)
         csv_data = pd.read_csv(csv_path, index_col=0)
+        s1 = csv_data.shape[0]
+        csv_data = csv_data.dropna()
+        if csv_data.shape[0] != s1:
+            print('drop {} nan samples'.format(s1 - csv_data.shape[0]))
         csv_data = csv_data.sample(frac=1, random_state=0)
         sizes = np.cumsum(sizes)
         i0 = 0
@@ -134,3 +128,19 @@ class TrainDataset:
         return data
 
 
+class TestDataset:
+    def __init__(self, args):
+        assert os.path.isfile(args.data_path)
+        text = []
+        self.tokenizer_path = os.path.join(MODEL_DIR, 'tokenizer.bin')
+        with open(args.data_path) as f:
+            for line in f.readlines():
+                text.append(line)
+        with open(self.tokenizer_path, 'rb') as f:
+            tokenizer = pickle.load(f)
+        text_ids = tokenizer.texts_to_sequences(text)
+        self.text_ids_pad = tf.keras.preprocessing.sequence.pad_sequences(text_ids, maxlen=MAX_LEN).astype(np.int32)
+        self.text_ids_pad = self.text_ids_pad.reshape((-1, 8, 8, 8))
+
+    def get_text_sequence(self):
+        return self.text_ids_pad

@@ -11,5 +11,6 @@ DATA_PATH = {
 
 TFRECORD_DIR = './tfrecord'
 import os
-os.makedirs('./saved_model', exist_ok=True)
-BEST_MODEL_PATH = './saved_model/best_model.ckpt'
+MODEL_DIR = './saved_model'
+os.makedirs(MODEL_DIR, exist_ok=True)
+BEST_MODEL_PATH = os.path.join(MODEL_DIR, 'best_model.ckpt')

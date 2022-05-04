@@ -18,15 +18,13 @@ parser.add_argument('--create_tfrecord', action='store_true',
                     load directly from "./tfrecord/train.tfrecord", "./tfrecord/val.tfrecord", "./tfrecord/test.tfrecord".
                     ''')
 parser.add_argument('--dataset', type=str, default='Yelp2013',
-                    choices=['Yelp2013', 'Yelp2014', 'Yelp2015', 'Amazon_F', 'Custom'], help='dataset to train on')
+                    choices=['Yelp2013', 'Yelp2014', 'Yelp2015', 'Custom'], help='dataset to train on')
 parser.add_argument('--train_data_path', type=str, default='',
                     help='if dataset is "Custom", please specify the path to the train csv')
 parser.add_argument('--test_data_path', type=str, default='',
                     help='if dataset is "Custom", please specify the path to the test csv')
 parser.add_argument('--val_size', type=float, default=0.1, help='validation size')
 parser.add_argument('--test_size', type=float, default=0.1, help='test size if test_csv is not specified')
-parser.add_argument('--rnn_type', type=str, default='GRU', choices=['SimpleRNN', 'LSTM', 'RNN'],
-                    help='rnn cell to use (default GRU)')
 parser.add_argument('--num_filters', type=int, default=50, help='hidden size of the RNN')
 parser.add_argument('--learning_rate', type=float, default=1e-3)
 parser.add_argument('--batch_size', type=int, default=2048)
