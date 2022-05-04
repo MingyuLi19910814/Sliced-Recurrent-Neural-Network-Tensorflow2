@@ -2,4 +2,7 @@
 *.txt
 *.pdf
 *.csv
-__pycache__
+__pycache__/
+tfrecord/
+*.tfrecord
+saved_model/

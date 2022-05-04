@@ -1,22 +1,16 @@
-# SRNN
-Author: Zeping Yu  <br />
-This work is accepted by COLING 2018. <br />
-[Sliced Recurrent Neural Network (SRNN)](https://arxiv.org/ftp/arxiv/papers/1807/1807.02291.pdf).  <br />
-SRNN is able to get much faster speed than standard RNN by slicing the sequences into many subsequences.  <br />
-The code is written in keras, using tensorflow backend. We implement the SRNN(8,2) here, and Yelp 2013 dataset is used.  <br />
-keras version: 2.1.5 <br />
-tensorflow version: 1.6.0 <br />
-python : 2.7 <br />
-If you have any question, please contact me at zepingyu@foxmail.com. <br />
-<br />
-The pre-trained GloVe word embeddings could be downloaded at:  <br /> 
-https://nlp.stanford.edu/projects/glove/ <br />
-<br />
-The Yelp 2013, 2014 and 2015 datasets are at:  <br /> 
-https://figshare.com/articles/Yelp_2013/6292142  <br />
-https://figshare.com/articles/Untitled_Item/6292253  <br />
-https://figshare.com/articles/Yelp_2015/6292334  <br />
-<br />
-Yelp_P, Amazon_P and Amazon_F datasets are at: https://drive.google.com/drive/folders/0Bz8a_Dbh9Qhbfll6bVpmNUtUcFdjYmF2SEpmZUZUcVNiMUw1TWN6RDV3a0JHT3kxLVhVR2M  <br />
+## Datasets
+Download the dataset you want to train on and move to ./data
 
-Here is an interesting modification of SRNN for text generation, similar to language model: https://github.com/whackashoe/srnn/tree/text-generation
+### Yelp 2013
+https://figshare.com/articles/dataset/Yelp_2013/6292142
+
+### Yelp 2014
+https://figshare.com/articles/dataset/Untitled_Item/6292253
+
+### Yelp 2015
+https://figshare.com/articles/dataset/Yelp_2015/6292334
+
+### Amazon Review Full
+https://doc-0o-88-docs.googleusercontent.com/docs/securesc/eiqg3i5fpjbgl3ab82cv1eump3meti6o/mve98b79ehsl0mv3j94vvr4s5lmr6v9t/1651620750000/07511006523564980941/07128768624675520494/0Bz8a_Dbh9QhbZVhsUnRWRDhETzA?resourcekey=0-Rp0ynafmZGZ5MflGmvwLGg&e=download&ax=ACxEAsa8ZR8QJT2gd3de9S6oq88rzVT-o_M32Rfhd6rTjW8wAAnU_y5cOuHsOcN4eteF45tVOKGplV0EVpD2axNOgnnYJ0y52dRDQJ8SGO7tkHD5B0jGQBYw2ZTn5JB1D6D5UGYusUFVlDCOKxFukjQYO1ZFpeH7EQGDsvJn-Bq7Y47dtt_TzVCUSFq1WznZxeFp1_AUSvYbSN3H99ut6zpU_NeOkfBqb0Gvl9fCYncqDG-ssFFJpPWAXEKAw2UjfKTpz6AyEw4zZNaw5cpg0LFdpg-oT5mbUDsPvWl0VVKf4JqH4rsE9f5WKsHOLB5sLtQKGnslF39UpVo2s_oV-SzfPhLtHUhZKquMIIPwTHwJ7XJ1lyEv325-9ZuEonTdFb_2ML7L07XCnr_JQvKrPCh5YSCthykCN2n5xeDjy9sq6AqKN3jlyF6m6_mfZn71-Pl_vfx7oLeeZBVSsnubuR4YcsDgXamjO-iNSm996dnWXDU_ms70J3IE6aACr21-bUnJe6gxgFlFdu7ryU5WhDSUduFWwpMouW_cA11rinWo6-ONfl6sfAL5abJao6FDtThBO8czX9q4lmIC9sbogcb-LKKfAS4hP03uYjoT-To2VISufgv5oL6eISMa8xHDwvwPz0O8yzSk33DcxC3mSIvc6WmIHR6YwNjDd4Njt-EhY2wFDjSi52Y9N24wxn9gvIY&authuser=0&nonce=voo3kggaghiga&user=07128768624675520494&hash=65tkv179vo82htotsv5msl94b2lab6c5
+
+
