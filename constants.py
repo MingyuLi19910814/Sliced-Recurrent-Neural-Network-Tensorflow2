@@ -4,9 +4,9 @@ EMBEDDING_DIM = 200
 GloVe_PATH = './data/glove.6B.200d.txt'
 
 DATA_PATH = {
-    'Yelp2013': './data/yelp_2013.csv',
-    'Yelp2014': './data/yelp_2014.csv',
-    'Yelp2015': './data/yelp_2015.csv'
+    'Yelp2013': './data/yelp/yelp_2013.csv',
+    'Yelp2014': './data/yelp/yelp_2014.csv',
+    'Yelp2015': './data/yelp/yelp_2015.csv'
 }
 
 TFRECORD_DIR = './tfrecord'

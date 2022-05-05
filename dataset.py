@@ -24,9 +24,9 @@ class TrainDataset:
         if args.create_tfrecord:
             print('reading data')
             if args.dataset == 'Custom':
-                assert os.path.isfile(args.train_data_path) and os.path.isfile(args.test_data_path)
-                train_df, val_df = self.split_csv(args.train_data_path, [1 - args.val_size, args.val_size])
-                test_df = pd.read_csv(args.test_data_path)
+                assert os.path.isfile(args.train_data_path)
+                val_df, test_df, train_df = \
+                    self.split_csv(args.train_data_path, [args.val_size, args.test_size, 1 - args.val_size - args.test_size])
                 train_data = train_df.to_numpy()
                 val_data = val_df.to_numpy()
                 test_data = test_df.to_numpy()
@@ -106,6 +106,9 @@ class TrainDataset:
     def split_csv(self, csv_path, sizes):
         assert (isinstance(sizes, list) or isinstance(sizes, tuple)) and np.isclose(np.sum(sizes), 1)
         csv_data = pd.read_csv(csv_path, index_col=0)
+        # Yelp dataset contains index column but most custom data doesn't.
+        if csv_data.shape[1] == 1:
+            csv_data = pd.read_csv(csv_path, index_col=None)
         s1 = csv_data.shape[0]
         csv_data = csv_data.dropna()
         if csv_data.shape[0] != s1:

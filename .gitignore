@@ -1,8 +1,9 @@
 .idea/
 *.txt
 *.pdf
-*.csv
+./data/yelp/
 __pycache__/
 tfrecord/
 *.tfrecord
 saved_model/
+result.txt

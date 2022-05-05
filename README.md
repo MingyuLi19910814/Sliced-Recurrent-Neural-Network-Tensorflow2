@@ -1,20 +1,83 @@
-## Datasets
-Download the dataset you want to train on and move to ./data
+# Overview
 
-### Yelp 2013
-https://figshare.com/articles/dataset/Yelp_2013/6292142
-python train.py --dataset Yelp2013 --val_size 0.1 --test_size 0.1   --epochs 10 --create_tfrecord
-### Yelp 2014
-https://figshare.com/articles/dataset/Untitled_Item/6292253
-python train.py --dataset Yelp2014 --val_size 0.1 --test_size 0.1   --epochs 10 --create_tfrecord
-### Yelp 2015
-https://figshare.com/articles/dataset/Yelp_2015/6292334
-python train.py --dataset Yelp2015 --val_size 0.1 --test_size 0.1   --epochs 10 --create_tfrecord
-### Amazon Review Full
-https://doc-0o-88-docs.googleusercontent.com/docs/securesc/eiqg3i5fpjbgl3ab82cv1eump3meti6o/mve98b79ehsl0mv3j94vvr4s5lmr6v9t/1651620750000/07511006523564980941/07128768624675520494/0Bz8a_Dbh9QhbZVhsUnRWRDhETzA?resourcekey=0-Rp0ynafmZGZ5MflGmvwLGg&e=download&ax=ACxEAsa8ZR8QJT2gd3de9S6oq88rzVT-o_M32Rfhd6rTjW8wAAnU_y5cOuHsOcN4eteF45tVOKGplV0EVpD2axNOgnnYJ0y52dRDQJ8SGO7tkHD5B0jGQBYw2ZTn5JB1D6D5UGYusUFVlDCOKxFukjQYO1ZFpeH7EQGDsvJn-Bq7Y47dtt_TzVCUSFq1WznZxeFp1_AUSvYbSN3H99ut6zpU_NeOkfBqb0Gvl9fCYncqDG-ssFFJpPWAXEKAw2UjfKTpz6AyEw4zZNaw5cpg0LFdpg-oT5mbUDsPvWl0VVKf4JqH4rsE9f5WKsHOLB5sLtQKGnslF39UpVo2s_oV-SzfPhLtHUhZKquMIIPwTHwJ7XJ1lyEv325-9ZuEonTdFb_2ML7L07XCnr_JQvKrPCh5YSCthykCN2n5xeDjy9sq6AqKN3jlyF6m6_mfZn71-Pl_vfx7oLeeZBVSsnubuR4YcsDgXamjO-iNSm996dnWXDU_ms70J3IE6aACr21-bUnJe6gxgFlFdu7ryU5WhDSUduFWwpMouW_cA11rinWo6-ONfl6sfAL5abJao6FDtThBO8czX9q4lmIC9sbogcb-LKKfAS4hP03uYjoT-To2VISufgv5oL6eISMa8xHDwvwPz0O8yzSk33DcxC3mSIvc6WmIHR6YwNjDd4Njt-EhY2wFDjSi52Y9N24wxn9gvIY&authuser=0&nonce=voo3kggaghiga&user=07128768624675520494&hash=65tkv179vo82htotsv5msl94b2lab6c5
+This repository implements the Sliced Recurrent Neural Networks of [Zeping Yu](https://arxiv.org/pdf/1807.02291v1.pdf)
+in Tensorflow 2. It's based on the original [Keras implementation](https://github.com/zepingyu0512/srnn). 
 
-python train.py --create_tfrecord --dataset Custom --train_data_path data/amazon_review_full_csv/train.csv --test_data_path data/amazon_review_full_csv/test.csv --val_size 0.1 --epochs 20
+# My Contribution
+1. Implementation in Tensorflow 2 and Python 3
+2. Implements TimeDistributed Module which has problem working with GRU in current Tensorflow version.
+3. Efficient data processing pipeline
+4. Training pipeline of Yelp2013, Yelp2014, Yelp25 and custom dataset
+5. Inference pipeline
 
+# Requirement
+It's strongly recommended to use Anaconda to build the environment.
+```commandline
+conda env create -f environment.yml
+conda activate tensorflow
+```
+
+# Train
+
+Everytime training on a new dataset, remember to add the **--create_tfrecord** option
+to create tfrecords from the dataset. Otherwise, it would use old tfrecords saved in **./tfrecord**
+which means still training on old dataset. Once the tfrecords are created, you could 
+skip it next time.
+
+The model with highest evaluation accuracy would be saved in **./saved_model**
+## Download Glove Vector
+This implementation uses GloVe embedding as the pretrained embedding weights. 
+Please download **glove.6B.200d.txt** from [this link](https://www.kaggle.com/datasets/incorpes/glove6b200d/code)
+and save as **./data/glove.6B.200d.txt**.
+
+## Train on Yelp2013
+Download Yelp2013 dataset from [this link](https://figshare.com/articles/dataset/Yelp_2013/6292142) and save as **./data/yelp_2013.csv**
+```commandline
+python train.py --dataset Yelp2013 \
+                --val_size 0.1 \
+                --test_size 0.1 \
+                --epochs 10 \
+                --create_tfrecord \
+                --batch_size 2048 #RTX2080ti
+
+```
+
+## Train on Yelp2014
+Download Yelp2014 dataset from [this link](https://figshare.com/articles/dataset/Untitled_Item/6292253) and save as **./data/yelp_2014.csv**
+```commandline
+python train.py --dataset Yelp2014 \
+                --val_size 0.1 \
+                --test_size 0.1 \
+                --epochs 10 \
+                --create_tfrecord \
+                --batch_size 2048
+```
+
+## Train on Yelp2015
+Download Yelp2015 dataset from [this link](https://figshare.com/articles/dataset/Yelp_2015/6292334) and save as **./data/yelp_2015.csv**
+```commandline
+python train.py --dataset Yelp2015 \
+                --val_size 0.1 \
+                --test_size 0.1 \
+                --epochs 10 \
+                --create_tfrecord \
+                --batch_size 2048
+```
+
+## Train on custom dataset
+Please refer to **data/train_sample.csv** to prepare the custom data.  
+The train dataset should be a csv file containing two columns.
+1. The first column contains the label ranging from 1 to class_num
+2. The second column contains the sentences.
+```commandline
+python train.py --dataset Custom \ # This must be "Custom"
+                --train_data_path ./data/train_sample.csv \
+                --val_size 0.1 \
+                --test_size 0.1 \
+                --epochs 10\
+                --create_tfrecord \
+                --batch_size 2048
+```
 
 # Result
 
