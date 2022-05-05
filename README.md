@@ -70,7 +70,7 @@ The train dataset should be a csv file containing two columns.
 1. The first column contains the label ranging from 1 to class_num
 2. The second column contains the sentences.
 ```commandline
-python train.py --dataset Custom \ # This must be "Custom"
+python train.py --dataset Custom \
                 --train_data_path ./data/train_sample.csv \
                 --val_size 0.1 \
                 --test_size 0.1 \
@@ -79,8 +79,12 @@ python train.py --dataset Custom \ # This must be "Custom"
                 --batch_size 2048
 ```
 
-# Result
+# Performance
+| Dataset   | Accuracy | Second per epoch |
+|-----------|----------|------------------|
+| Yelp 2013 | 0.650    | 89               |
+| Yelp 2014 | 0.689    | 128              |
+| Yelp 2015 | 0.7195   | 171              |
 
-Yelp 2013, batch size = 2048: 0.650
-Yelp 2014, batch size = 2048: 0.689
-Yelp 2015, batch size = 2048: 0.7195
+The accuracy is about 1% lower than the paper. It is because this implementation
+uses batch size=2048 while the paper uses 50
