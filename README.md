@@ -80,11 +80,19 @@ python train.py --dataset Custom \
 ```
 
 # Performance
+## SRNN Performance
 | Dataset   | Accuracy | Second per epoch |
 |-----------|----------|------------------|
 | Yelp 2013 | 0.650    | 89               |
 | Yelp 2014 | 0.689    | 128              |
-| Yelp 2015 | 0.7195   | 171              |
+| Yelp 2015 | 0.720    | 171              |
 
-The accuracy is about 1% lower than the paper. It is because this implementation
-uses batch size=2048 while the paper uses 50
+## Naive RNN Performance
+| Dataset   | Accuracy | Second per epoch |
+|-----------|----------|------------------|
+| Yelp 2013 | 0.653    | 141              |
+| Yelp 2014 | 0.691    | 189              |
+| Yelp 2015 | 0.722    | 264              |
+
+The accuracy of RNN is about 1% lower than the paper. It is because this implementation
+uses batch size=2048 to fully make use of the GPU resource while the paper uses 50

@@ -6,7 +6,6 @@ from tensorflow.keras.layers import Embedding, Dense, GRU, Input
 from SimplifiedTimeDistributed import ModelTimeDistributed
 from constants import EMBEDDING_DIM, MAX_LEN, GloVe_PATH
 
-
 def create_model(args, vocab=None):
     print("Loading GloVe embeddings")
     if not os.path.isfile(GloVe_PATH):
@@ -42,35 +41,53 @@ def create_model(args, vocab=None):
                                     EMBEDDING_DIM,
                                     input_length=MAX_LEN / 64,
                                     trainable=True)
-
-    # build model
-    # (None, 8)
-    input1 = Input(shape=(MAX_LEN // 64,), dtype=tf.int32)
-    # (None, 8, EMBEDDING_DIM)
-    embed = embedding_layer(input1)
-    # (None, NUM_FILTERS), sequence_dim is removed since return_sequences=False
-    gru1 = GRU(args.num_filters, recurrent_activation='sigmoid', activation=None, return_sequences=False)(embed)
-    # input: (None, 8)
-    # output: (None, NUM_FILTERS)
-    Encoder1 = tf.keras.Model(input1, gru1)
-
-    # (None, 8, 8)
-    input2 = Input(shape=(8, MAX_LEN // 64,), dtype=tf.int32)
-    # (None, 8, NUM_FILTERS)
-    embed2 = ModelTimeDistributed(Encoder1)(input2)
-    # (None, NUM_FILTERS)
-    gru2 = GRU(args.num_filters, recurrent_activation='sigmoid', activation=None, return_sequences=False)(embed2)
-    # input: (None, 8, 8)
-    # output: (None, NUM_FILTERS)
-    Encoder2 = tf.keras.Model(input2, gru2)
-
-    # (None, 8, 8, 8)
-    input3 = Input(shape=(8, 8, MAX_LEN // 64), dtype=tf.int32)
-    # (None, 8, NUM_FILTERS)
-    embed3 = ModelTimeDistributed(Encoder2)(input3)
-    # (None, NUM_FILTERS)
-    gru3 = GRU(args.num_filters, recurrent_activation='sigmoid', activation=None, return_sequences=False)(embed3)
-    # (None, 5)
-    preds = Dense(args.num_class, activation='softmax')(gru3)
-    model = tf.keras.Model(input3, preds)
+    if args.model == 'srnn':
+        # (-1, 8)
+        input1 = tf.keras.layers.Input(shape=(MAX_LEN // 64), dtype=tf.int32)
+        # (-1, 8, EMBEDDING_DIM)
+        embed1 = embedding_layer(input1)
+        # (-1, num_filters)
+        gru1 = tf.keras.layers.GRU(args.num_filters,
+                                   return_sequences=False,
+                                   activation=None,
+                                   recurrent_activation='sigmoid')(embed1)
+        encoder1 = tf.keras.Model(input1, gru1)
+        # (-1, 8, 8)
+        input2 = tf.keras.layers.Input(shape=(8, MAX_LEN // 64), dtype=tf.int32)
+        # (-1, 8, num_filters)
+        embed2 = ModelTimeDistributed(encoder1)(input2)
+        # (-1, num_filters)
+        gru2 = tf.keras.layers.GRU(args.num_filters,
+                                   return_sequences=False,
+                                   activation=None,
+                                   recurrent_activation='sigmoid')(embed2)
+        encoder2 = tf.keras.Model(input2, gru2)
+        # (-1, 8, 8, 8)
+        input3 = tf.keras.layers.Input(shape=(8, 8, MAX_LEN // 64), dtype=tf.int32)
+        # (-1, 8, num_filters)
+        embed3 = ModelTimeDistributed(encoder2)(input3)
+        # (-1, num_filters)
+        gru3 = tf.keras.layers.GRU(args.num_filters,
+                                   return_sequences=False,
+                                   activation=None,
+                                   recurrent_activation='sigmoid')(embed3)
+        # (-1, num_class)
+        pred = tf.keras.layers.Dense(args.num_class, activation='softmax', )(gru3)
+        model = tf.keras.Model(input3, pred)
+    else:
+        # (-1, 8, 8, 8)
+        inputs = tf.keras.layers.Input(shape=(8, 8, MAX_LEN // 64), dtype=tf.int32)
+        # (-1, MAX_LEN)
+        input_flatten = tf.reshape(inputs, (-1, MAX_LEN))
+        # (-1, MAX_LEN, EMBEDDING_DIM)
+        embed = embedding_layer(input_flatten)
+        # (-1, EMBEDDING_DIM)
+        gru = tf.keras.layers.GRU(args.num_filters,
+                                  return_sequences=False,
+                                  recurrent_activation='sigmoid',
+                                  activation=None)(embed)
+        # (-1, num_class)
+        pred = tf.keras.layers.Dense(args.num_class, activation='softmax')(gru)
+        model = tf.keras.Model(inputs, pred)
+        return model
     return model

@@ -17,6 +17,7 @@ parser.add_argument('--create_tfrecord', action='store_true',
                     Otherwise, the program would ignore "--dataset", "--train_data_path" and "--test_data_path" and
                     load directly from "./tfrecord/train.tfrecord", "./tfrecord/val.tfrecord", "./tfrecord/test.tfrecord".
                     ''')
+parser.add_argument('--model', type=str, default='srnn', choices=['srnn', 'naive_rnn'])
 parser.add_argument('--dataset', type=str, default='Yelp2013',
                     choices=['Yelp2013', 'Yelp2014', 'Yelp2015', 'Custom'], help='dataset to train on')
 parser.add_argument('--train_data_path', type=str, default='',
